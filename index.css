@@ -1,0 +1,56 @@
+.container-fluid{
+
+    margin-top:2%;
+}
+
+span{
+    font-size: clamp(1rem, -0.5rem + 5.3333vw, 2.5rem);
+    font-weight: bold;
+    font-family: 'Roboto Mono', sans-serif;
+}
+
+
+.employee{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:1%;
+    padding:2%;
+    border: solid;
+    border-right: none;
+    border-left: none;
+}
+
+#add{
+    width:23%;
+    border: none;
+    color:white;
+    border-radius: 0.2rem;
+    font-weight: bold;
+    outline: none;
+    font-size: clamp(0.75rem, 0.5rem + 0.8889vw, 1rem);
+    font-family: 'Roboto Mono', sans-serif;
+}
+
+#add:hover{
+    opacity: 0.9;
+}
+
+table.table-bordered.table-striped.table-hover{
+    font-size: clamp(0.75rem, 0.5rem + 0.8889vw, 1rem);
+    font-family: 'Roboto Mono', sans-serif;
+    table-layout: fixed;
+    word-wrap: break-word;
+}
+
+#action{
+    width:25%;
+}
+
+#actions{
+    width: 100%;
+    margin:1%;
+    padding:3%;
+    font-size: clamp(0.75rem, 0.5rem + 0.8889vw, 1rem);
+}
+
+

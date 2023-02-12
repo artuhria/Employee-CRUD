@@ -1,0 +1,228 @@
+<html>
+
+<head>
+  <title>CRUD</title>
+  <link rel="stylesheet" href="index.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
+    integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+
+
+  <script>
+    //Display Employee Table
+    $(document).ready(function () {
+      displayEmployee();
+    });
+
+    function displayEmployee() {
+      var displayEmployee = "true";
+      $.ajax({
+        url: "display.php",
+        type: 'post',
+        data: {
+          displayData: displayEmployee,
+        },
+        success: function (data, status) {
+          $('#empTable').html(data);
+        }
+
+      });
+    }
+
+    function addEmployee() {
+      var namevalue = document.getElementById('addName').value;
+      var addressvalue = document.getElementById('addAddress').value;
+      var phonevalue = document.getElementById('addPhone').value;
+      var emailvalue = document.getElementById('addEmail').value;
+
+      if (namevalue != "" || addressvalue != "" || phonevalue != "" || emailvalue != "") {
+        var name = $('#addName').val();
+        var address = $('#addAddress').val();
+        var phone = $('#addPhone').val();
+        var email = $('#addEmail').val();
+
+        $.ajax({
+          url: "insert.php",
+          type: 'post',
+          data: {
+            nameAdd: name,
+            addressAdd: address,
+            phoneAdd: phone,
+            emailAdd: email
+          },
+          success: function (data, status) {         
+            $('#addEmployee').modal("hide");             
+            displayEmployee();          
+          }
+        });
+
+        document.getElementById('addName').value = "";
+        document.getElementById('addAddress').value = "";
+        document.getElementById('addPhone').value = "";
+        document.getElementById('addEmail').value = "";
+      } else {
+        alert("Please fill out the form")
+      }
+    }
+
+    //Delete Employee
+    function deleteEmployee(deleteId) {
+      $.ajax({
+        url: "delete.php",
+        type: 'post',
+        data: {
+          deleteEmp: deleteId
+        },
+        success: function (data, status) {
+          displayEmployee();
+        }
+      });
+    }
+
+    //Display Employee Details in Update Modal
+    function updateEmployee(updateId) {
+      $('#hiddenId').val(updateId);
+
+      $.post("update.php", { updateId: updateId }, function (data, status) {
+        var empId = JSON.parse(data);
+        $('#updateName').val(empId.name);
+        $('#updateAddress').val(empId.address);
+        $('#updatePhone').val(empId.phone);
+        $('#updateEmail').val(empId.email);
+      });
+      $('#updateEmployee').modal("show");
+    }
+
+    //Update Employee Details
+    function updateDetails(){
+      var updateName = $('#updateName').val();
+      var updateAddress = $('#updateAddress').val();
+      var updatePhone = $('#updatePhone').val();
+      var updateEmail = $('#updateEmail').val();
+      var hiddenId = $('#hiddenId').val();
+
+      $.post("update.php", {
+        updateName:updateName,
+        updateAddress:updateAddress,
+        updatePhone:updatePhone,
+        updateEmail:updateEmail,
+        hiddenId:hiddenId
+      }, function(data,status){
+        $('#updateEmployee').modal("hide");
+        displayEmployee();
+      });
+    }
+  </script>
+</head>
+
+
+<body>
+  <div class="container-fluid">
+    <div class="employee">
+      <span>Employee Details</span>
+      <button class="btn btn-success" id="add" data-toggle="modal" data-target="#addEmployee">Add</button>
+    </div>
+    <div class="col" id="empTable"></div>
+
+    <!-- Update Employee Modal -->
+    <div class="modal fade" id="addEmployee" tabindex="-1" role="dialog" aria-labelledby="addLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addLabel">Add Employee</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form autocomplete="off">
+              <div class="form-group">
+                <label for="addName">Full Name</label>
+                <input type="text" class="form-control" id="addName" placeholder="Enter name">
+              </div>
+              <div class="form-group">
+                <label for="addAddress">Address</label>
+                <input type="text" class="form-control" id="addAddress" placeholder="Enter address">
+              </div>
+              <div class="form-group">
+                <label for="addPhone">Phone</label>
+                <input type="text" class="form-control" id="addPhone" placeholder="Enter phone">
+              </div>
+              <div class="form-group">
+                <label for="addEmail">Email Address</label>
+                <input type="text" class="form-control" id="addEmail" placeholder="Enter email">
+              </div>
+
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            <input type="button" class="btn btn-success" onclick="addEmployee()" value="Submit">
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="updateEmployee" tabindex="-1" role="dialog" aria-labelledby="updateLabel"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="updateLabel">Update Details</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form autocomplete="off">
+              <div class="form-group">
+                <label for="updateName">Full Name</label>
+                <input type="text" class="form-control" id="updateName" placeholder="Enter name">
+              </div>
+              <div class="form-group">
+                <label for="updateAddress">Address</label>
+                <input type="text" class="form-control" id="updateAddress" placeholder="Enter address">
+              </div>
+              <div class="form-group">
+                <label for="updatePhone">Phone</label>
+                <input type="text" class="form-control" id="updatePhone" placeholder="Enter phone">
+              </div>
+              <div class="form-group">
+                <label for="updateEmail">Email Address</label>
+                <input type="text" class="form-control" id="updateEmail" placeholder="Enter email">
+              </div>
+
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            <input type="button" class="btn btn-success" onclick="updateDetails()" value="Update">
+            <input type="hidden" id="hiddenId">
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+
+
+</html>
